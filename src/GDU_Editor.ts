@@ -287,7 +287,7 @@ export class GDU_EditorProvider implements vscode.CustomEditorProvider<GDU_Docum
 		document: GDU_Document,
 		webviewPanel: vscode.WebviewPanel,
 		_token: vscode.CancellationToken
-	): Promise<void> {		
+	): Promise<void> {
 		// Add the webview to our internal set of active webviews
 		this.webviews.add(document.uri, webviewPanel);
 
@@ -570,7 +570,7 @@ export class GDU_EditorProvider implements vscode.CustomEditorProvider<GDU_Docum
 		panel.webview.postMessage({ type, body });
 	}
 
-	private async onMessage(document: GDU_Document, message: any) {		
+	private async onMessage(document: GDU_Document, message: any) {
 		switch (message.type) {
 			case 'editor_click':
 				document.makeEdit(message as GDU_EditorEdit);
@@ -586,10 +586,10 @@ export class GDU_EditorProvider implements vscode.CustomEditorProvider<GDU_Docum
 			case "exportTAP":	// Expport to TAP
 				{
 					// Test data
-					let tapFileName=message.fileName;
-					let data=message.body;
+					let tapFileName = message.fileName;
+					let data = message.body;
 
-					await this.ExportToBIN(tapFileName,data);
+					await this.ExportToBIN(tapFileName, data);
 					return;
 				}
 
@@ -599,10 +599,10 @@ export class GDU_EditorProvider implements vscode.CustomEditorProvider<GDU_Docum
 			case "exportDATA":	// Export to DATA			
 				{
 					// Test data
-					let tapFileName=message.fileName;
-					let data=message.body;
+					let tapFileName = message.fileName;
+					let data = message.body;
 
-					await this.ExportToText(tapFileName,data);
+					await this.ExportToText(tapFileName, data);
 					return;
 				}
 
@@ -615,18 +615,18 @@ export class GDU_EditorProvider implements vscode.CustomEditorProvider<GDU_Docum
 	 * @param tapFileName: Name of the PC file
 	 * @param data: Array of data to save
 	 */
-	private async ExportToBIN(tapFileName,data){
+	private async ExportToBIN(tapFileName, data) {
 		// Create the uri of the file
-		const folderUri=vscode?.workspace.workspaceFolders?.find(x=>x!==undefined)?.uri as vscode.Uri;
+		const folderUri = vscode?.workspace.workspaceFolders?.find(x => x !== undefined)?.uri as vscode.Uri;
 		const fileUri = folderUri?.with({ path: posix.join(folderUri.path, tapFileName) });
 		// Convert data to Uint8Array (it can be optimised)
-		const dataParts=data.toString().split(",");
+		const dataParts = data.toString().split(",");
 		const binData = new Array(dataParts.length);
-		for(let n=0; n<dataParts.length; n++){
-			binData[n]=parseInt(dataParts[n]);
+		for (let n = 0; n < dataParts.length; n++) {
+			binData[n] = parseInt(dataParts[n]);
 			//binData.push((item:number)=>parseInt(dataParts[n]));
 		}
-		const dataArray=Uint8Array.from(binData);
+		const dataArray = Uint8Array.from(binData);
 		// Save data
 		await vscode.workspace.fs.writeFile(fileUri, dataArray);
 	}
@@ -637,14 +637,14 @@ export class GDU_EditorProvider implements vscode.CustomEditorProvider<GDU_Docum
 	 * @param tapFileName: Name of the PC file
 	 * @param data: Data to save
 	 */
-	private async ExportToText(fileName,data){
+	private async ExportToText(fileName, data) {
 		// Create the uri of the file
-		const folderUri=vscode?.workspace.workspaceFolders?.find(x=>x!==undefined)?.uri as vscode.Uri;
+		const folderUri = vscode?.workspace.workspaceFolders?.find(x => x !== undefined)?.uri as vscode.Uri;
 		const fileUri = folderUri.with({ path: posix.join(folderUri.path, fileName) });
-		const binData=Uint8Array.from(data.split("").map(x => x.charCodeAt()));
+		const binData = Uint8Array.from(data.split("").map(x => x.charCodeAt()));
 		// Save data
 		await vscode.workspace.fs.writeFile(fileUri, binData);
-	}	
+	}
 }
 
 
